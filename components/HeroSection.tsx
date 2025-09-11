@@ -22,7 +22,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="bg-accent-lime text-primary-forest inline-block px-4 py-2 font-bold text-sm mb-6 uppercase tracking-wider">
+            <div className="bg-gradient-to-r from-primary-blue to-primary-sky text-white inline-block px-4 py-2 font-bold text-sm mb-6 uppercase tracking-wider shadow-lg">
               2025.10.26 SUN
             </div>
             
@@ -30,7 +30,7 @@ export default function HeroSection() {
               <span className="text-6xl md:text-7xl lg:text-8xl font-bold block">
                 LANDBRIDGE
               </span>
-              <span className="text-6xl md:text-7xl lg:text-8xl font-bold block text-accent-lime">
+              <span className="text-6xl md:text-7xl lg:text-8xl font-bold block bg-gradient-to-r from-primary-blue via-primary-sky to-accent-teal bg-clip-text text-transparent">
                 CUP 2025
               </span>
             </h1>

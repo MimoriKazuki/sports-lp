@@ -40,7 +40,7 @@ export default function NotesSection() {
             </ul>
           </div>
 
-          <div className="mt-8 p-6 border-l-4 border-accent-lime bg-blue-50">
+          <div className="mt-8 p-6 border-l-4 border-primary-blue bg-blue-50">
             <p className="font-bold text-primary-forest mb-2">お問い合わせ</p>
             <p className="text-gray-700">
               ご不明な点がございましたら、大会事務局までお気軽にお問い合わせください。
