@@ -19,11 +19,11 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     setIsLoading(true)
 
     // 簡易的な認証（本番環境では適切な認証システムを使用）
-    if (username === 'admin' && password === 'landbridge2025') {
+    if (username === 'sales@landbridge.co.jp' && password === 'Lb@123456') {
       localStorage.setItem('adminAuth', 'true')
       onLogin()
     } else {
-      setError('ユーザー名またはパスワードが正しくありません')
+      setError('メールアドレスまたはパスワードが正しくありません')
     }
     
     setIsLoading(false)
@@ -51,19 +51,19 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                ユーザー名
+                メールアドレス
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  type="text"
+                  type="email"
                   id="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent"
-                  placeholder="管理者ユーザー名"
+                  placeholder="メールアドレス"
                   required
                   disabled={isLoading}
                 />

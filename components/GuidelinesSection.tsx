@@ -28,25 +28,6 @@ export default function GuidelinesSection() {
             <div className="w-32 h-1 bg-primary-green mx-auto"></div>
           </div>
 
-          {/* スパルタンビーチ警告 */}
-          <motion.div
-            initial={{ scale: 0.95 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-400 rounded-xl p-8 mb-12"
-          >
-            <div className="flex items-center justify-center mb-4">
-              <AlertTriangle className="w-8 h-8 text-red-500 mr-3" />
-              <h3 className="text-2xl font-bold text-red-600">スパルタンビーチ</h3>
-              <AlertTriangle className="w-8 h-8 text-red-500 ml-3" />
-            </div>
-            <p className="text-center text-lg text-red-700 font-bold">
-              約3時間30分、休憩なしでビーチボールを行います
-            </p>
-            <p className="text-center text-sm text-red-600 mt-2">
-              ※ 体力に自信のある方のみご参加ください
-            </p>
-          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             {/* ルール */}
@@ -138,18 +119,6 @@ export default function GuidelinesSection() {
             </div>
           </motion.div>
 
-          {/* 注意事項 */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="mt-8 p-6 bg-yellow-50 border border-yellow-400 rounded-lg"
-          >
-            <p className="text-center text-yellow-800 font-medium">
-              ⚠️ 長時間の競技となりますので、十分な体調管理と水分補給をお願いします
-            </p>
-          </motion.div>
         </motion.div>
       </div>
     </section>

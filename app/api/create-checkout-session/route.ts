@@ -1,25 +1,44 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createPendingEntry, checkEmailExists, getEntryStats } from '@/lib/supabase-entries'
+import { entrySchema } from '@/lib/validation'
+import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-11-20.acacia',
 })
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // レート制限チェック
+  const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')
+  if (!allowed) {
+    return rateLimitResponse(retryAfter)
+  }
+  
   try {
     const body = await request.json()
     const { entryData } = body
+    
+    // 入力検証
+    const validationResult = entrySchema.safeParse(entryData)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: validationResult.error.errors[0].message },
+        { status: 400 }
+      )
+    }
+    
+    const validatedData = validationResult.data
 
     // 定員チェック
     const stats = await getEntryStats()
-    if (entryData.gender === 'male' && stats.male_remaining <= 0) {
+    if (validatedData.gender === 'male' && stats.male_remaining <= 0) {
       return NextResponse.json(
         { error: '男性の定員に達しました' },
         { status: 400 }
       )
     }
-    if (entryData.gender === 'female' && stats.female_remaining <= 0) {
+    if (validatedData.gender === 'female' && stats.female_remaining <= 0) {
       return NextResponse.json(
         { error: '女性の定員に達しました' },
         { status: 400 }
@@ -27,7 +46,7 @@ export async function POST(request: Request) {
     }
 
     // メールアドレスの重複チェック
-    const emailExists = await checkEmailExists(entryData.email)
+    const emailExists = await checkEmailExists(validatedData.email)
     if (emailExists) {
       return NextResponse.json(
         { error: 'このメールアドレスは既に登録されています' },
@@ -44,7 +63,7 @@ export async function POST(request: Request) {
             currency: 'jpy',
             product_data: {
               name: 'LANDBRIDGE CUP 2025 エントリー費',
-              description: `参加者: ${entryData.name}`,
+              description: `参加者: ${validatedData.name}`,
             },
             unit_amount: 3000, // 3000円
           },
@@ -52,21 +71,21 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'payment',
-      success_url: `${request.headers.get('origin')}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${request.headers.get('origin')}/#application`,
+      success_url: `${request.headers.get('origin') || 'http://localhost:3002'}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${request.headers.get('origin') || 'http://localhost:3002'}/#application`,
       metadata: {
-        name: entryData.name,
-        age: entryData.age,
-        gender: entryData.gender,
-        phone: entryData.phone,
-        email: entryData.email,
+        name: validatedData.name,
+        age: String(validatedData.age),
+        gender: validatedData.gender,
+        phone: validatedData.phone,
+        email: validatedData.email,
       },
-      customer_email: entryData.email,
+      customer_email: validatedData.email,
     })
 
     // Supabaseに仮エントリーを作成
     await createPendingEntry({
-      ...entryData,
+      ...validatedData,
       stripe_session_id: session.id
     })
 
@@ -76,8 +95,9 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error('Stripe session creation error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create checkout session'
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: errorMessage },
       { status: 500 }
     )
   }

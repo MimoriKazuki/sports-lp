@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Trash2, Users, UserCheck, UserX, Download, Search, Filter, RefreshCw } from 'lucide-react'
-import { Entry } from '@/lib/entries'
+import { Entry } from '@/lib/supabase'
 
 export default function AdminDashboard() {
   const [entries, setEntries] = useState<Entry[]>([])
@@ -21,11 +21,17 @@ export default function AdminDashboard() {
   const fetchEntries = async () => {
     try {
       const response = await fetch('/api/entries')
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
       const data = await response.json()
-      setEntries(data.entries)
-      setCounts(data.counts)
+      setEntries(data.entries || [])
+      setCounts(data.counts || { male: 0, female: 0, total: 0 })
     } catch (error) {
       console.error('Failed to fetch entries:', error)
+      // エラー時のデフォルト値を設定
+      setEntries([])
+      setCounts({ male: 0, female: 0, total: 0 })
     } finally {
       setLoading(false)
     }
@@ -48,17 +54,17 @@ export default function AdminDashboard() {
   }
 
   const exportToCSV = () => {
-    const headers = ['ID', '氏名', '年齢', '性別', '電話番号', 'メールアドレス', '登録日時']
+    const headers = ['氏名', '年齢', '性別', '電話番号', 'メールアドレス', '支払い状況', '登録日時']
     const csvContent = [
       headers.join(','),
       ...filteredEntries.map(entry => [
-        entry.id,
         entry.name,
         entry.age,
         entry.gender === 'male' ? '男性' : '女性',
         entry.phone,
         entry.email,
-        new Date(entry.createdAt).toLocaleString('ja-JP')
+        '支払い済み',
+        entry.created_at ? new Date(entry.created_at).toLocaleString('ja-JP') : '-'
       ].join(','))
     ].join('\n')
 
@@ -104,6 +110,25 @@ export default function AdminDashboard() {
               <RefreshCw className="w-4 h-4" />
               更新
             </button>
+          </div>
+          
+          {/* 合計金額表示 */}
+          <div className="bg-white p-4 rounded-lg shadow mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-primary-green/10 p-3 rounded-lg">
+                  <span className="text-2xl">💰</span>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">決済合計金額</p>
+                  <p className="text-3xl font-bold text-primary-forest">¥{(counts.total * 3000).toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">単価: ¥3,000</p>
+                <p className="text-sm text-gray-500">{counts.total}名分</p>
+              </div>
+            </div>
           </div>
           
           {/* メイン統計カード */}
@@ -200,7 +225,7 @@ export default function AdminDashboard() {
                     🚫 募集終了
                   </span>
                 ) : (
-                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold">
+                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-bold">
                     ✅ 募集中
                   </span>
                 )}
@@ -256,9 +281,6 @@ export default function AdminDashboard() {
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   氏名
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -274,6 +296,12 @@ export default function AdminDashboard() {
                   メールアドレス
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  支払い状況
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  決済金額
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   登録日時
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -284,9 +312,6 @@ export default function AdminDashboard() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredEntries.map((entry) => (
                 <tr key={entry.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    #{entry.id}
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {entry.name}
                   </td>
@@ -296,7 +321,7 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       entry.gender === 'male' 
-                        ? 'bg-green-100 text-green-800' 
+                        ? 'bg-blue-100 text-blue-800' 
                         : 'bg-emerald-100 text-emerald-800'
                     }`}>
                       {entry.gender === 'male' ? '男性' : '女性'}
@@ -308,8 +333,16 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {entry.email}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                      ✓ 支払い済み
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    ¥3,000
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(entry.createdAt).toLocaleString('ja-JP')}
+                    {entry.created_at ? new Date(entry.created_at).toLocaleString('ja-JP') : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <button

@@ -1,5 +1,21 @@
 import { supabase, supabaseAdmin, Entry, EntryStats } from './supabase'
 
+// セッションIDからエントリーを取得
+export async function getEntryBySessionId(sessionId: string) {
+  const { data, error } = await supabaseAdmin
+    .from('entries')
+    .select('*')
+    .eq('stripe_session_id', sessionId)
+    .single()
+
+  if (error) {
+    console.error('Error fetching entry by session ID:', error)
+    return null
+  }
+
+  return data as Entry
+}
+
 // エントリー一覧を取得
 export async function getEntries() {
   const { data, error } = await supabaseAdmin

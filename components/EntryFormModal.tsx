@@ -76,9 +76,9 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
         body: JSON.stringify({ entryData: formData }),
       })
       
+      const data = await response.json()
+      
       if (response.ok) {
-        const data = await response.json()
-        
         // Stripeの決済ページにリダイレクト
         if (data.url) {
           window.location.href = data.url
@@ -86,7 +86,9 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
           alert('決済ページの作成に失敗しました。')
         }
       } else {
-        alert('エラーが発生しました。もう一度お試しください。')
+        // エラーメッセージを表示
+        const errorMessage = data.error || 'エラーが発生しました。もう一度お試しください。'
+        alert(errorMessage)
       }
     } catch (error) {
       console.error('Error creating checkout session:', error)

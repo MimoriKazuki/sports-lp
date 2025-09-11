@@ -7,6 +7,7 @@ LANDBRIDGE CUP 2025の公式ウェブサイト。エントリー管理、決済�
 - **フロントエンド**: Next.js 15, TypeScript, Tailwind CSS
 - **データベース**: Supabase (PostgreSQL)
 - **決済**: Stripe
+- **メール送信**: Resend
 - **ホスティング**: Vercel（推奨）
 
 ## セットアップ
@@ -24,6 +25,9 @@ npm install
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_key
 STRIPE_SECRET_KEY=your_key
 STRIPE_WEBHOOK_SECRET=your_secret
+
+# Resend
+RESEND_API_KEY=your_key
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_url
@@ -88,8 +92,8 @@ vercel --prod
 - リアルタイム統計
 
 **管理画面ログイン**:
-- ユーザー名: `admin`
-- パスワード: `landbridge2025`
+- メールアドレス: `sales@landbridge.co.jp`
+- パスワード: `Lb@123456`
 
 ## プロジェクト構成
 ```

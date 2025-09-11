@@ -15,8 +15,8 @@ const overviewCards = [
   },
   {
     label: '募集人数',
-    value: '30名',
-    sub: '男女各15名',
+    value: '32名',
+    sub: '男女各16名',
   },
   {
     label: '優勝賞品',

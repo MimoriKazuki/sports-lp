@@ -18,11 +18,6 @@ const features = [
     title: '男女混成試合',
     description: '男女がバランスよく配置され、公平で楽しい試合を実現。',
   },
-  {
-    number: '04',
-    title: '初心者歓迎',
-    description: '経験者から初心者まで、レベルを考慮したチーム編成。',
-  },
 ]
 
 export default function FeaturesSection() {
@@ -43,27 +38,25 @@ export default function FeaturesSection() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.number}
-              initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="flex gap-6"
+              className="flex flex-col items-center text-center"
             >
-              <div className="text-5xl font-bold text-primary-green/20">
+              <div className="text-6xl font-bold text-primary-green/20 mb-4">
                 {feature.number}
               </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-primary-forest mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
+              <h3 className="text-xl font-bold text-primary-forest mb-3">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {feature.description}
+              </p>
             </motion.div>
           ))}
         </div>
