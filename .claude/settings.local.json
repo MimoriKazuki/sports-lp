@@ -8,7 +8,8 @@
       "Bash(npm run dev:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(vercel:*)"
     ],
     "deny": [],
     "ask": []
