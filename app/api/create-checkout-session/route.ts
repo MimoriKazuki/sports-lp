@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { createPendingEntry, checkEmailExists, getEntryStats } from '@/lib/supabase-entries'
+import { checkEmailExists, getEntryStats } from '@/lib/supabase-entries'
 import { entrySchema } from '@/lib/validation'
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
@@ -19,11 +19,16 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { entryData } = body
     
+    // デバッグ情報
+    console.log('Received entryData:', entryData)
+    
     // 入力検証
     const validationResult = entrySchema.safeParse(entryData)
     if (!validationResult.success) {
+      console.error('Validation errors:', validationResult.error.errors)
+      const errorMessage = validationResult.error.errors?.[0]?.message || '入力データが不正です'
       return NextResponse.json(
-        { error: validationResult.error.errors[0].message },
+        { error: errorMessage },
         { status: 400 }
       )
     }
@@ -45,11 +50,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // メールアドレスの重複チェック
+    // メールアドレスの重複チェック（支払い済みのエントリーのみチェック）
     const emailExists = await checkEmailExists(validatedData.email)
     if (emailExists) {
       return NextResponse.json(
-        { error: 'このメールアドレスは既に登録されています' },
+        { error: 'このメールアドレスは既に登録が完了しています。別のメールアドレスをご利用ください。' },
         { status: 400 }
       )
     }
@@ -83,11 +88,8 @@ export async function POST(request: NextRequest) {
       customer_email: validatedData.email,
     })
 
-    // Supabaseに仮エントリーを作成
-    await createPendingEntry({
-      ...validatedData,
-      stripe_session_id: session.id
-    })
+    // 注意: ここではデータベースに登録しない
+    // Stripe Webhookで決済完了確認後に登録する
 
     return NextResponse.json({ 
       sessionId: session.id,

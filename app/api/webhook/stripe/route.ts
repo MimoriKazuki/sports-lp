@@ -34,11 +34,34 @@ export async function POST(request: NextRequest) {
         
         console.log('Payment completed for session:', session.id)
         
-        // データベースのエントリーを確定
-        const confirmedEntry = await confirmEntry(session.id)
+        // メタデータから参加者情報を取得
+        const metadata = session.metadata
+        if (!metadata || !metadata.email) {
+          console.error('Missing metadata in session:', session.id)
+          break
+        }
+        
+        // 既存のエントリーをチェック（二重登録防止）
+        const { getEntryBySessionId, createPaidEntry } = await import('@/lib/supabase-entries')
+        const existingEntry = await getEntryBySessionId(session.id)
+        
+        if (existingEntry) {
+          console.log('Entry already exists for session:', session.id)
+          break
+        }
+        
+        // 決済完了後にエントリーを作成
+        const confirmedEntry = await createPaidEntry({
+          name: metadata.name,
+          age: parseInt(metadata.age, 10),
+          gender: metadata.gender as 'male' | 'female',
+          phone: metadata.phone,
+          email: metadata.email,
+          stripe_session_id: session.id
+        })
         
         if (confirmedEntry) {
-          console.log('Entry confirmed:', confirmedEntry)
+          console.log('Entry created:', confirmedEntry)
           
           // 確認メールを送信
           const emailResult = await sendConfirmationEmail({

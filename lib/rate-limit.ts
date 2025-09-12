@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // APIエンドポイント用のレート制限設定
 const rateLimiters = {
-  // エントリー作成: 1IPあたり10分間に5回まで
+  // エントリー作成: 1IPあたり10分間に20回まで（開発中は緩和）
   createEntry: new RateLimiterMemory({
-    points: 5,
+    points: process.env.NODE_ENV === 'development' ? 100 : 20,
     duration: 600, // 10分
     blockDuration: 600, // ブロック時間: 10分
   }),

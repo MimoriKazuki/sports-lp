@@ -109,6 +109,32 @@ export async function deleteEntry(id: string) {
   return true
 }
 
+// 決済完了後に直接エントリーを作成（支払い済み状態）
+export async function createPaidEntry(entryData: {
+  name: string
+  age: number
+  gender: 'male' | 'female'
+  phone: string
+  email: string
+  stripe_session_id: string
+}) {
+  const { data, error } = await supabaseAdmin
+    .from('entries')
+    .insert([{
+      ...entryData,
+      payment_status: 'paid'
+    }])
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error creating paid entry:', error)
+    throw error
+  }
+
+  return data as Entry
+}
+
 // メールアドレスでエントリーをチェック
 export async function checkEmailExists(email: string) {
   const { data, error } = await supabase

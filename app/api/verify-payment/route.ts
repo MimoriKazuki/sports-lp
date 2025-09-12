@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { confirmEntry } from '@/lib/supabase-entries'
+import { createPaidEntry, getEntryBySessionId } from '@/lib/supabase-entries'
 import { sendConfirmationEmail } from '@/lib/email'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -11,12 +11,38 @@ export async function POST(request: Request) {
   try {
     const { sessionId } = await request.json()
 
+    // まず既存のエントリーをチェック（二重登録防止）
+    const existingEntry = await getEntryBySessionId(sessionId)
+    if (existingEntry) {
+      return NextResponse.json({
+        success: true,
+        entry: existingEntry,
+        message: 'エントリーは既に完了しています'
+      })
+    }
+
     // Stripeセッションを取得
     const session = await stripe.checkout.sessions.retrieve(sessionId)
 
     if (session.payment_status === 'paid') {
-      // 決済が成功した場合、Supabaseのエントリーを確定
-      const confirmedEntry = await confirmEntry(sessionId)
+      // メタデータから参加者情報を取得
+      const metadata = session.metadata
+      if (!metadata || !metadata.email) {
+        return NextResponse.json({
+          success: false,
+          message: '参加者情報が見つかりません'
+        }, { status: 400 })
+      }
+
+      // 決済が成功した場合、Supabaseにエントリーを作成
+      const confirmedEntry = await createPaidEntry({
+        name: metadata.name,
+        age: parseInt(metadata.age, 10),
+        gender: metadata.gender as 'male' | 'female',
+        phone: metadata.phone,
+        email: metadata.email,
+        stripe_session_id: sessionId
+      })
       
       if (confirmedEntry) {
         // 確認メールを送信

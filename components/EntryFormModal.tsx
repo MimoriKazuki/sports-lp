@@ -32,6 +32,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [currentEntryCount, setCurrentEntryCount] = useState(entryCount)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     // モーダルが開かれた時に最新の申し込み人数を取得
@@ -48,19 +49,20 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMessage('') // エラーメッセージをクリア
     
     if (!agreedToTerms || !agreedToPrivacy) {
-      alert('利用規約と個人情報の取り扱いに同意してください。')
+      setErrorMessage('利用規約と個人情報の取り扱いに同意してください。')
       return
     }
     
     // 定員チェック
     if (formData.gender === 'male' && currentEntryCount.male >= 16) {
-      alert('申し訳ございません。男性の定員に達しました。')
+      setErrorMessage('申し訳ございません。男性の定員に達しました。')
       return
     }
     if (formData.gender === 'female' && currentEntryCount.female >= 16) {
-      alert('申し訳ございません。女性の定員に達しました。')
+      setErrorMessage('申し訳ございません。女性の定員に達しました。')
       return
     }
     
@@ -73,7 +75,12 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ entryData: formData }),
+        body: JSON.stringify({ 
+          entryData: {
+            ...formData,
+            age: parseInt(formData.age, 10)
+          }
+        }),
       })
       
       const data = await response.json()
@@ -87,12 +94,12 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
         }
       } else {
         // エラーメッセージを表示
-        const errorMessage = data.error || 'エラーが発生しました。もう一度お試しください。'
-        alert(errorMessage)
+        const message = data.error || 'エラーが発生しました。もう一度お試しください。'
+        setErrorMessage(message)
       }
     } catch (error) {
       console.error('Error creating checkout session:', error)
-      alert('送信中にエラーが発生しました。')
+      setErrorMessage('送信中にエラーが発生しました。もう一度お試しください。')
     } finally {
       setIsSubmitting(false)
     }
@@ -115,6 +122,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
       setAgreedToPrivacy(false)
       setShowTerms(false)
       setShowPrivacy(false)
+      setErrorMessage('')
     }, 300)
   }
 
@@ -131,18 +139,20 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={!isSubmitted && !showTerms && !showPrivacy ? handleClose : undefined}
-            className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 overflow-y-auto"
+            className="fixed inset-0 bg-black/60 overflow-y-auto"
             style={{ zIndex: 9998 }}
           >
-            {/* モーダル */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-              className="relative w-full max-w-2xl bg-white p-10 shadow-2xl mx-auto my-8"
-              onClick={(e) => e.stopPropagation()}
-            >
+            {/* モーダルコンテナ */}
+            <div className="min-h-screen flex items-start justify-center p-4 pt-8">
+              {/* モーダル */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+                className="relative w-full max-w-2xl bg-white p-10 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
               {!isSubmitted ? (
                 <>
                   <button
@@ -352,6 +362,13 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                       </div>
                     </div>
 
+                    {/* エラーメッセージ表示 */}
+                    {errorMessage && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                        <p className="text-sm font-medium">{errorMessage}</p>
+                      </div>
+                    )}
+
                     <button
                       type="submit"
                       disabled={isSubmitting || !agreedToTerms || !agreedToPrivacy}
@@ -434,7 +451,8 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                   </button>
                 </motion.div>
               )}
-            </motion.div>
+              </motion.div>
+            </div>
           </motion.div>
 
           {/* 利用規約モーダル */}
