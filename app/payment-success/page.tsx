@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { CheckCircle, Loader2, Calendar, MapPin, Clock, Mail, Home } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [verifying, setVerifying] = useState(true)
@@ -237,4 +237,21 @@ export default function PaymentSuccessPage() {
   }
 
   return null
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-primary-blue/5 via-white to-primary-sky/5 flex items-center justify-center">
+        <div className="bg-white p-12 rounded-2xl shadow-2xl max-w-md w-full">
+          <div className="flex flex-col items-center">
+            <Loader2 className="w-16 h-16 text-primary-blue animate-spin mb-6" />
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">読み込み中...</h1>
+          </div>
+        </div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
+  )
 }

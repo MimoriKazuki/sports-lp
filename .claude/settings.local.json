@@ -16,7 +16,12 @@
       "Bash(psql:*)",
       "Bash(node:*)",
       "Bash(cat:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(echo \"Vercelトークンを作成するには、以下の手順を実行してください：\n\n1. https://vercel.com/account/tokens にアクセス\n2. ''Create'' ボタンをクリック\n3. トークン名を入力（例：sports-lp-deployment）\n4. スコープはデフォルトのままでOK\n5. ''Create Token'' をクリック\n6. 生成されたトークンをコピー\n\nその後、以下のコマンドでデプロイ：\nVERCEL_TOKEN=your-token-here vercel --prod --yes --token=your-token-here\n\nまたは環境変数に設定：\nexport VERCEL_TOKEN=your-token-here\nvercel --prod --yes\")",
+      "Bash(chmod:*)",
+      "Bash(./set-vercel-env.sh:*)",
+      "Bash(npm run build:*)",
+      "Read(//var/folders/h2/bp8c5ty547qbq7vb6ng8jgy40000gq/T/TemporaryItems/NSIRD_screencaptureui_mvcnIk/**)"
     ],
     "deny": [],
     "ask": []

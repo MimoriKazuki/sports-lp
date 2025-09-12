@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Lock, User, AlertCircle } from 'lucide-react'
+import Link from 'next/link'
 
 interface AdminLoginProps {
   onLogin: () => void
@@ -108,12 +109,12 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
         </div>
 
         <div className="mt-4 text-center">
-          <a
+          <Link
             href="/"
             className="text-white/80 hover:text-white text-sm transition-colors"
           >
             ← トップページに戻る
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -21,8 +21,8 @@ export const entrySchema = z.object({
     .min(18, '18歳以上の方のみ参加可能です')
     .max(70, '70歳以下の方のみ参加可能です'),
   
-  gender: z.enum(['male', 'female'], {
-    errorMap: () => ({ message: '性別を選択してください' })
+  gender: z.enum(['male', 'female'] as const, {
+    message: '性別を選択してください'
   }),
   
   phone: z.string()

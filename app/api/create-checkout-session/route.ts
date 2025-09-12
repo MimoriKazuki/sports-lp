@@ -5,7 +5,7 @@ import { entrySchema } from '@/lib/validation'
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-11-20.acacia',
+  apiVersion: '2025-08-27.basil',
 })
 
 export async function POST(request: NextRequest) {
@@ -25,8 +25,8 @@ export async function POST(request: NextRequest) {
     // 入力検証
     const validationResult = entrySchema.safeParse(entryData)
     if (!validationResult.success) {
-      console.error('Validation errors:', validationResult.error.errors)
-      const errorMessage = validationResult.error.errors?.[0]?.message || '入力データが不正です'
+      console.error('Validation errors:', validationResult.error.issues)
+      const errorMessage = validationResult.error.issues?.[0]?.message || '入力データが不正です'
       return NextResponse.json(
         { error: errorMessage },
         { status: 400 }
