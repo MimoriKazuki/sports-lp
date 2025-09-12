@@ -21,7 +21,9 @@
       "Bash(chmod:*)",
       "Bash(./set-vercel-env.sh:*)",
       "Bash(npm run build:*)",
-      "Read(//var/folders/h2/bp8c5ty547qbq7vb6ng8jgy40000gq/T/TemporaryItems/NSIRD_screencaptureui_mvcnIk/**)"
+      "Read(//var/folders/h2/bp8c5ty547qbq7vb6ng8jgy40000gq/T/TemporaryItems/NSIRD_screencaptureui_mvcnIk/**)",
+      "Bash(git rm:*)",
+      "Bash(npx vercel:*)"
     ],
     "deny": [],
     "ask": []
