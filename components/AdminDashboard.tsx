@@ -1,10 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Trash2, Users, UserCheck, UserX, Download, Search, Filter, RefreshCw } from 'lucide-react'
+import { Trash2, Users, UserCheck, UserX, Download, Search, Filter, RefreshCw, DollarSign, Receipt } from 'lucide-react'
 import { Entry } from '@/lib/supabase'
+import ExpenseManager from './ExpenseManager'
+import ProfitLossSummary from './ProfitLossSummary'
 
 export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState<'entries' | 'expenses' | 'summary'>('entries')
   const [entries, setEntries] = useState<Entry[]>([])
   const [counts, setCounts] = useState({ male: 0, female: 0, total: 0 })
   const [searchTerm, setSearchTerm] = useState('')
@@ -96,8 +99,63 @@ export default function AdminDashboard() {
       <div className="bg-white shadow-lg rounded-lg">
         <div className="bg-primary-forest text-white p-6 rounded-t-lg">
           <h1 className="text-3xl font-bold">LANDBRIDGE CUP 2025 管理画面</h1>
-          <p className="mt-2 text-white/80">エントリー管理システム</p>
+          <p className="mt-2 text-white/80">エントリー・経費管理システム</p>
         </div>
+
+        {/* タブナビゲーション */}
+        <div className="border-b bg-gray-50">
+          <nav className="flex gap-1 p-1">
+            <button
+              onClick={() => setActiveTab('entries')}
+              className={`flex items-center gap-2 px-6 py-3 font-medium rounded-t-lg transition-all ${
+                activeTab === 'entries'
+                  ? 'bg-white text-primary-forest border-b-2 border-primary-forest'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              <Users className="w-5 h-5" />
+              エントリー管理
+            </button>
+            <button
+              onClick={() => setActiveTab('expenses')}
+              className={`flex items-center gap-2 px-6 py-3 font-medium rounded-t-lg transition-all ${
+                activeTab === 'expenses'
+                  ? 'bg-white text-primary-forest border-b-2 border-primary-forest'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              <Receipt className="w-5 h-5" />
+              経費管理
+            </button>
+            <button
+              onClick={() => setActiveTab('summary')}
+              className={`flex items-center gap-2 px-6 py-3 font-medium rounded-t-lg transition-all ${
+                activeTab === 'summary'
+                  ? 'bg-white text-primary-forest border-b-2 border-primary-forest'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              <DollarSign className="w-5 h-5" />
+              収支サマリー
+            </button>
+          </nav>
+        </div>
+
+        {/* タブコンテンツ */}
+        {activeTab === 'summary' && (
+          <div className="p-6">
+            <ProfitLossSummary />
+          </div>
+        )}
+
+        {activeTab === 'expenses' && (
+          <div className="p-6">
+            <ExpenseManager />
+          </div>
+        )}
+
+        {activeTab === 'entries' && (
+          <>
 
         {/* 統計情報 - 大きく表示 */}
         <div className="bg-gradient-to-r from-primary-green/10 to-primary-emerald/10 p-8 border-b">
@@ -363,6 +421,8 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
+          </>
+        )}
       </div>
     </div>
   )
