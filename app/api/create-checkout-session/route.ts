@@ -4,11 +4,26 @@ import { checkEmailExists, getEntryStats } from '@/lib/supabase-entries'
 import { entrySchema } from '@/lib/validation'
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+// 環境変数のチェック
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error('STRIPE_SECRET_KEY is not set in environment variables')
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2025-08-27.basil',
+  maxNetworkRetries: 2,
+  timeout: 10000, // 10 seconds
 })
 
 export async function POST(request: NextRequest) {
+  // 環境変数チェック
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('STRIPE_SECRET_KEY is missing')
+    return NextResponse.json(
+      { error: 'Payment service is not properly configured' },
+      { status: 500 }
+    )
+  }
   // レート制限チェック
   const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')
   if (!allowed) {
@@ -97,6 +112,31 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Stripe session creation error:', error)
+
+    // より詳細なエラー情報をログ出力
+    if (error instanceof Stripe.errors.StripeError) {
+      console.error('Stripe Error Type:', error.type)
+      console.error('Stripe Error Code:', error.code)
+      console.error('Stripe Error Message:', error.message)
+      console.error('Stripe Raw Error:', error.raw)
+
+      // APIキーのエラー
+      if (error.type === 'StripeAuthenticationError') {
+        return NextResponse.json(
+          { error: 'Payment configuration error. Please contact support.' },
+          { status: 500 }
+        )
+      }
+
+      // ネットワークエラー
+      if (error.type === 'StripeConnectionError') {
+        return NextResponse.json(
+          { error: 'Connection to payment service failed. Please try again.' },
+          { status: 500 }
+        )
+      }
+    }
+
     const errorMessage = error instanceof Error ? error.message : 'Failed to create checkout session'
     return NextResponse.json(
       { error: errorMessage },
