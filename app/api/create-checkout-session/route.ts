@@ -7,6 +7,9 @@ import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 export async function POST(request: NextRequest) {
   // 環境変数チェック
   const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
+  console.log('STRIPE_KEY exists:', !!STRIPE_KEY)
+  console.log('STRIPE_KEY prefix:', STRIPE_KEY?.substring(0, 7))
+
   if (!STRIPE_KEY) {
     console.error('STRIPE_SECRET_KEY is missing from environment variables')
     return NextResponse.json(
@@ -18,13 +21,17 @@ export async function POST(request: NextRequest) {
   // Stripeクライアントを動的に初期化
   let stripe: Stripe
   try {
+    console.log('Initializing Stripe client...')
     stripe = new Stripe(STRIPE_KEY, {
       apiVersion: '2025-08-27.basil',
       maxNetworkRetries: 2,
       timeout: 10000, // 10 seconds
     })
+    console.log('Stripe client initialized successfully')
   } catch (error) {
     console.error('Failed to initialize Stripe client:', error)
+    console.error('Error type:', typeof error)
+    console.error('Error details:', JSON.stringify(error, null, 2))
     return NextResponse.json(
       { error: 'Failed to initialize payment service' },
       { status: 500 }
@@ -81,6 +88,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Stripeチェックアウトセッションを作成
+    console.log('Creating Stripe checkout session...')
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -116,30 +124,36 @@ export async function POST(request: NextRequest) {
       sessionId: session.id,
       url: session.url 
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Stripe session creation error:', error)
+    console.error('Error name:', error?.name)
+    console.error('Error message:', error?.message)
+    console.error('Error type:', error?.type)
+    console.error('Error code:', error?.code)
+    console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2))
 
     // Stripeエラーの詳細なハンドリング
-    if (error instanceof Stripe.errors.StripeError) {
-      console.error('Stripe Error Type:', error.type)
-      console.error('Stripe Error Code:', error.code)
-      console.error('Stripe Error Message:', error.message)
+    if (error?.type === 'StripeAuthenticationError') {
+      return NextResponse.json(
+        { error: 'Payment configuration error. Please contact support.' },
+        { status: 500 }
+      )
+    }
 
-      // APIキーのエラー
-      if (error.type === 'StripeAuthenticationError') {
-        return NextResponse.json(
-          { error: 'Payment configuration error. Please contact support.' },
-          { status: 500 }
-        )
-      }
+    // ネットワークエラー
+    if (error?.type === 'StripeConnectionError') {
+      return NextResponse.json(
+        { error: 'Connection to payment service failed. Please try again.' },
+        { status: 500 }
+      )
+    }
 
-      // ネットワークエラー
-      if (error.type === 'StripeConnectionError') {
-        return NextResponse.json(
-          { error: 'Connection to payment service failed. Please try again.' },
-          { status: 500 }
-        )
-      }
+    // その他のStripeエラー
+    if (error?.statusCode === 401) {
+      return NextResponse.json(
+        { error: 'Invalid API key. Please contact support.' },
+        { status: 500 }
+      )
     }
 
     const errorMessage = error instanceof Error ? error.message : 'Failed to create checkout session'
