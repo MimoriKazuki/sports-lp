@@ -11,7 +11,7 @@ const overviewCards = [
   {
     label: '参加費',
     value: '¥3,000',
-    sub: '当日払い',
+    sub: '前払い',
   },
   {
     label: '募集人数',
