@@ -50,8 +50,8 @@ export default function HeroSection() {
                 <div className="font-bold">越谷地域スポーツセンター</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 text-white">
-                <div className="text-sm opacity-70">時間</div>
-                <div className="font-bold">13:00-17:00</div>
+                <div className="text-sm opacity-70">日時</div>
+                <div className="font-bold">2025年10月26日 13:00-17:00</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 text-white">
                 <div className="text-sm opacity-70">集合</div>

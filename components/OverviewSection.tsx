@@ -4,9 +4,9 @@ import { motion } from 'framer-motion'
 
 const overviewCards = [
   {
-    label: '開催時間',
-    value: '13:00-17:00',
-    sub: '集合 12:45',
+    label: '開催日時',
+    value: '2025年10月26日',
+    sub: '13:00-17:00 (集合 12:45)',
   },
   {
     label: '参加費',
