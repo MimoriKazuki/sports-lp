@@ -4,21 +4,29 @@ import { checkEmailExists, getEntryStats } from '@/lib/supabase-entries'
 import { entrySchema } from '@/lib/validation'
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
-// 環境変数のチェック
-const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
-
-const stripe = STRIPE_KEY ? new Stripe(STRIPE_KEY, {
-  apiVersion: '2025-08-27.basil',
-  maxNetworkRetries: 2,
-  timeout: 10000, // 10 seconds
-}) : null
-
 export async function POST(request: NextRequest) {
   // 環境変数チェック
-  if (!stripe) {
-    console.error('STRIPE_SECRET_KEY is missing or stripe client not initialized')
+  const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
+  if (!STRIPE_KEY) {
+    console.error('STRIPE_SECRET_KEY is missing from environment variables')
     return NextResponse.json(
       { error: 'Payment service is not properly configured' },
+      { status: 500 }
+    )
+  }
+
+  // Stripeクライアントを動的に初期化
+  let stripe: Stripe
+  try {
+    stripe = new Stripe(STRIPE_KEY, {
+      apiVersion: '2025-08-27.basil',
+      maxNetworkRetries: 2,
+      timeout: 10000, // 10 seconds
+    })
+  } catch (error) {
+    console.error('Failed to initialize Stripe client:', error)
+    return NextResponse.json(
+      { error: 'Failed to initialize payment service' },
       { status: 500 }
     )
   }
