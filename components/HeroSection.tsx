@@ -50,13 +50,13 @@ export default function HeroSection() {
                 <div className="font-bold">越谷地域スポーツセンター</div>
                 <div className="text-xs opacity-70 mt-1">〒343-0025 埼玉県越谷市大沢2-10-21</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 text-white flex flex-col justify-center">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 text-white flex flex-col">
                 <div className="text-sm opacity-70">日時</div>
-                <div className="font-bold">2025年10月26日 13:00-17:00</div>
+                <div className="font-bold flex-1 flex items-center">2025年10月26日 13:00-17:00</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 text-white flex flex-col justify-center">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 text-white flex flex-col">
                 <div className="text-sm opacity-70">集合</div>
-                <div className="font-bold">12:45</div>
+                <div className="font-bold flex-1 flex items-center">12:45</div>
               </div>
             </div>
 
