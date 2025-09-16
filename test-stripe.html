@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Stripe Connection Test</title>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <h1>Stripe Connection Test</h1>
+  <div id="result"></div>
+  <button id="testBtn">Test Stripe Connection</button>
+
+  <script>
+    const publicKey = 'pk_live_51Q3XSFKvr8fxkHMdGdlGEtF1S4Cmus0uI5tTjdy8BpHU4zBwPu1xHyq5L1EmlFLrUIZrjh0EnH4rpNHMOGNiWC8400Ly0baoWu';
+    const resultDiv = document.getElementById('result');
+
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      try {
+        resultDiv.innerHTML = 'Testing Stripe connection...';
+
+        // Test 1: Initialize Stripe
+        const stripe = Stripe(publicKey);
+        resultDiv.innerHTML += '<br>✅ Stripe initialized successfully';
+
+        // Test 2: Call API to create checkout session
+        const response = await fetch('http://localhost:3001/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            entryData: {
+              name: 'テスト太郎',
+              age: 25,
+              gender: 'male',
+              phone: '090-1234-5678',
+              email: 'test@example.com'
+            }
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.innerHTML += '<br>✅ Checkout session created: ' + data.sessionId;
+          resultDiv.innerHTML += '<br>URL: ' + data.url;
+        } else {
+          resultDiv.innerHTML += '<br>❌ Error: ' + (data.error || 'Unknown error');
+        }
+      } catch (error) {
+        resultDiv.innerHTML += '<br>❌ Error: ' + error.message;
+        console.error('Full error:', error);
+      }
+    });
+  </script>
+</body>
+</html>
