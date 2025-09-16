@@ -545,7 +545,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                   <h4 className="font-bold">6. お問い合わせ</h4>
                   <p>個人情報の取り扱いに関するお問い合わせは、以下までご連絡ください：</p>
                   <p>LandBridge株式会社<br />
-                  Email: info@landbridge-cup.com</p>
+                  Email: info@landbridge.co.jp</p>
                 </div>
                 <button
                   onClick={() => setShowPrivacy(false)}

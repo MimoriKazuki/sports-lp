@@ -31,10 +31,10 @@ export default function Footer() {
               <p className="font-bold mb-2">お問い合わせ</p>
               <p className="text-white/70">
                 <a
-                  href="mailto:info@landbridge-cup.com"
+                  href="mailto:info@landbridge.co.jp"
                   className="hover:text-accent-lime transition-colors"
                 >
-                  info@landbridge-cup.com
+                  info@landbridge.co.jp
                 </a>
               </p>
             </div>
