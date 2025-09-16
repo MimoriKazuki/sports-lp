@@ -25,6 +25,7 @@ export default function Footer() {
             <div>
               <p className="font-bold mb-2">会場</p>
               <p className="text-white/70">越谷地域スポーツセンター</p>
+              <p className="text-white/60 text-sm mt-1">〒343-0025<br />埼玉県越谷市大沢2-10-21</p>
             </div>
             <div>
               <p className="font-bold mb-2">お問い合わせ</p>

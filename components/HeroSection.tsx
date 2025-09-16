@@ -48,6 +48,7 @@ export default function HeroSection() {
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 text-white">
                 <div className="text-sm opacity-70">会場</div>
                 <div className="font-bold">越谷地域スポーツセンター</div>
+                <div className="text-xs opacity-70 mt-1">〒343-0025 埼玉県越谷市大沢2-10-21</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 text-white">
                 <div className="text-sm opacity-70">日時</div>
