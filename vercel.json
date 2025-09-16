@@ -8,8 +8,5 @@
   "github": {
     "silent": true
   },
-  "regions": ["iad1"],
-  "deploymentProtection": {
-    "enabled": false
-  }
+  "regions": ["iad1"]
 }
