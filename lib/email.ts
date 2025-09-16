@@ -15,11 +15,6 @@ export async function sendConfirmationEmail(data: EmailTemplateData) {
   }
 
   const resend = new Resend(apiKey)
-
-  // TEMPORARY: Resendアカウントがドメイン認証待ちのため、
-  // 現在はsales@landbridge.co.jpにのみ送信可能
-  // TODO: ドメイン認証完了後、この行を削除してdata.emailを使用
-  const recipientEmail = 'sales@landbridge.co.jp' // 本来はdata.emailを使用
   const genderText = data.gender === 'male' ? '男性' : '女性'
   
   const htmlContent = `
@@ -177,9 +172,9 @@ export async function sendConfirmationEmail(data: EmailTemplateData) {
   
   try {
     const result = await resend.emails.send({
-      from: 'onboarding@resend.dev', // TEMPORARY: ドメイン認証完了後、info@landbridge.co.jpに変更
-      to: recipientEmail, // TEMPORARY: ドメイン認証完了後、data.emailに変更
-      subject: `【LANDBRIDGE CUP 2025】エントリー完了のお知らせ - ${data.name}様`,
+      from: 'LANDBRIDGE CUP 2025 <info@landbridge.co.jp>',
+      to: data.email,
+      subject: '【LANDBRIDGE CUP 2025】エントリー完了のお知らせ',
       html: htmlContent,
     })
     
