@@ -28,7 +28,8 @@
       "Bash(open test-stripe.html)",
       "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel env ls --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge)",
       "Bash(stripe:*)",
-      "Bash(brew install:*)"
+      "Bash(brew install:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

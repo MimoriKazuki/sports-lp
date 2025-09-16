@@ -5,20 +5,24 @@ import { entrySchema } from '@/lib/validation'
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 // 環境変数のチェック
-if (!process.env.STRIPE_SECRET_KEY) {
+const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
+if (!STRIPE_KEY) {
   console.error('STRIPE_SECRET_KEY is not set in environment variables')
+  console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('STRIPE')))
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+const stripe = STRIPE_KEY ? new Stripe(STRIPE_KEY, {
   apiVersion: '2025-08-27.basil',
   maxNetworkRetries: 2,
   timeout: 10000, // 10 seconds
-})
+}) : null
 
 export async function POST(request: NextRequest) {
   // 環境変数チェック
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.error('STRIPE_SECRET_KEY is missing')
+  if (!stripe || !STRIPE_KEY) {
+    console.error('STRIPE_SECRET_KEY is missing or stripe client not initialized')
+    console.error('Environment:', process.env.NODE_ENV)
+    console.error('Available STRIPE vars:', Object.keys(process.env).filter(key => key.includes('STRIPE')))
     return NextResponse.json(
       { error: 'Payment service is not properly configured' },
       { status: 500 }
