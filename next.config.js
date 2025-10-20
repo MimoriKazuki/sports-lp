@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false, // X-Powered-Byヘッダーを削除
+
+  // サーバーコンポーネントで外部パッケージとして扱う
+  serverExternalPackages: ['rate-limiter-flexible'],
+
   images: {
     remotePatterns: [
       {
