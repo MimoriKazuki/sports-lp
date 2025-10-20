@@ -10,7 +10,18 @@ const nextConfig = {
       },
     ],
   },
-  
+
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // クライアントサイドのビルドからrate-limiter-flexibleを除外
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        'rate-limiter-flexible': false,
+      }
+    }
+    return config
+  },
+
   async headers() {
     return [
       {
