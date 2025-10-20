@@ -57,7 +57,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
     }
     
     // 定員チェック
-    if (formData.gender === 'male' && currentEntryCount.male >= 16) {
+    if (formData.gender === 'male' && currentEntryCount.male >= 17) {
       setErrorMessage('申し訳ございません。男性の定員に達しました。')
       return
     }
@@ -126,7 +126,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
     }, 300)
   }
 
-  const remainingMale = 16 - currentEntryCount.male
+  const remainingMale = 17 - currentEntryCount.male
   const remainingFemale = 16 - currentEntryCount.female
 
   return (
@@ -174,7 +174,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                       <div className="flex justify-center gap-6 text-sm">
                         <div>
                           <span className="font-bold text-primary-green">男子</span>
-                          <span className="ml-2">{currentEntryCount.male}/16名</span>
+                          <span className="ml-2">{currentEntryCount.male}/17名</span>
                           <span className="text-xs text-gray-500 ml-1">（残り{remainingMale}名）</span>
                         </div>
                         <div>
