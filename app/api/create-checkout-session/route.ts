@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { checkEmailExists, getEntryStats } from '@/lib/supabase-entries'
 import { entrySchema } from '@/lib/validation'
-import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
+// import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,14 +39,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // レート制限チェック
-    console.log('Checking rate limit...')
-    const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')
-    if (!allowed) {
-      console.log('Rate limit exceeded')
-      return rateLimitResponse(retryAfter)
-    }
-    console.log('Rate limit check passed')
+    // レート制限チェック（一時的に無効化）
+    // console.log('Checking rate limit...')
+    // const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')
+    // if (!allowed) {
+    //   console.log('Rate limit exceeded')
+    //   return rateLimitResponse(retryAfter)
+    // }
+    // console.log('Rate limit check passed')
 
     const body = await request.json()
     const { entryData } = body
