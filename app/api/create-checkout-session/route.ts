@@ -5,49 +5,34 @@ import { entrySchema } from '@/lib/validation'
 // import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
+  // 環境変数チェック
+  const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
+  console.log('STRIPE_KEY exists:', !!STRIPE_KEY)
+  console.log('STRIPE_KEY prefix:', STRIPE_KEY?.substring(0, 7))
+
+  if (!STRIPE_KEY) {
+    console.error('STRIPE_SECRET_KEY is missing from environment variables')
+    return NextResponse.json(
+      { error: 'Payment service is not properly configured' },
+      { status: 500 }
+    )
+  }
+
+  // Stripeクライアントを初期化
+  const stripe = new Stripe(STRIPE_KEY, {
+    apiVersion: '2025-08-27.basil',
+    maxNetworkRetries: 2,
+    timeout: 10000, // 10 seconds
+  })
+  console.log('Stripe client initialized successfully')
+
+  // レート制限チェック（一時的に無効化）
+  // const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')
+  // if (!allowed) {
+  //   return rateLimitResponse(retryAfter)
+  // }
+
   try {
-    // 環境変数チェック
-    const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
-    console.log('STRIPE_KEY exists:', !!STRIPE_KEY)
-    console.log('STRIPE_KEY prefix:', STRIPE_KEY?.substring(0, 7))
-
-    if (!STRIPE_KEY) {
-      console.error('STRIPE_SECRET_KEY is missing from environment variables')
-      return NextResponse.json(
-        { error: 'Payment service is not properly configured' },
-        { status: 500 }
-      )
-    }
-
-    // Stripeクライアントを動的に初期化
-    let stripe: Stripe
-    try {
-      console.log('Initializing Stripe client...')
-      stripe = new Stripe(STRIPE_KEY, {
-        apiVersion: '2025-08-27.basil',
-        maxNetworkRetries: 2,
-        timeout: 10000, // 10 seconds
-      })
-      console.log('Stripe client initialized successfully')
-    } catch (error) {
-      console.error('Failed to initialize Stripe client:', error)
-      console.error('Error type:', typeof error)
-      console.error('Error details:', JSON.stringify(error, null, 2))
-      return NextResponse.json(
-        { error: 'Failed to initialize payment service' },
-        { status: 500 }
-      )
-    }
-
-    // レート制限チェック（一時的に無効化）
-    // console.log('Checking rate limit...')
-    // const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')
-    // if (!allowed) {
-    //   console.log('Rate limit exceeded')
-    //   return rateLimitResponse(retryAfter)
-    // }
-    // console.log('Rate limit check passed')
-
     const body = await request.json()
     const { entryData } = body
     
