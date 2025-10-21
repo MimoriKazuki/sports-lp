@@ -19,7 +19,7 @@ export async function GET() {
   try {
     // Stripeクライアントを初期化
     const stripe = new Stripe(STRIPE_KEY, {
-      apiVersion: '2025-08-27.basil',
+      apiVersion: '2025-09-30.clover',
     })
     result.stripeInitialized = true
 
