@@ -34,7 +34,7 @@ export async function getEntries() {
 
 // エントリー統計を取得
 export async function getEntryStats(): Promise<EntryStats> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .rpc('get_entry_stats')
 
   if (error) {
@@ -137,7 +137,7 @@ export async function createPaidEntry(entryData: {
 
 // メールアドレスでエントリーをチェック
 export async function checkEmailExists(email: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('entries')
     .select('id')
     .eq('email', email)

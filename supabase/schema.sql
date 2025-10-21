@@ -57,7 +57,10 @@ RETURNS TABLE (
   total_count INTEGER,
   male_remaining INTEGER,
   female_remaining INTEGER
-) AS $$
+)
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   RETURN QUERY
   SELECT
