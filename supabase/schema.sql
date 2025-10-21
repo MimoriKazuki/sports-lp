@@ -60,11 +60,11 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
   RETURN QUERY
-  SELECT 
+  SELECT
     COUNT(*) FILTER (WHERE gender = 'male' AND payment_status = 'paid')::INTEGER as male_count,
     COUNT(*) FILTER (WHERE gender = 'female' AND payment_status = 'paid')::INTEGER as female_count,
     COUNT(*) FILTER (WHERE payment_status = 'paid')::INTEGER as total_count,
-    (16 - COUNT(*) FILTER (WHERE gender = 'male' AND payment_status = 'paid'))::INTEGER as male_remaining,
+    (17 - COUNT(*) FILTER (WHERE gender = 'male' AND payment_status = 'paid'))::INTEGER as male_remaining,
     (16 - COUNT(*) FILTER (WHERE gender = 'female' AND payment_status = 'paid'))::INTEGER as female_remaining
   FROM entries;
 END;

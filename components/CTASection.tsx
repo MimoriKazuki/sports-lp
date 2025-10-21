@@ -26,7 +26,7 @@ export default function CTASection() {
                 エントリー受付中
               </p>
               <p className="text-lg mb-8 text-gray-700">
-                定員32名（男女各16名）
+                定員33名（男性17名、女性16名）
               </p>
               
               <button
