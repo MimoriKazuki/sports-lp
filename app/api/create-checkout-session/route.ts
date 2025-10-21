@@ -5,45 +5,49 @@ import { entrySchema } from '@/lib/validation'
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
-  // 環境変数チェック
-  const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
-  console.log('STRIPE_KEY exists:', !!STRIPE_KEY)
-  console.log('STRIPE_KEY prefix:', STRIPE_KEY?.substring(0, 7))
-
-  if (!STRIPE_KEY) {
-    console.error('STRIPE_SECRET_KEY is missing from environment variables')
-    return NextResponse.json(
-      { error: 'Payment service is not properly configured' },
-      { status: 500 }
-    )
-  }
-
-  // Stripeクライアントを動的に初期化
-  let stripe: Stripe
   try {
-    console.log('Initializing Stripe client...')
-    stripe = new Stripe(STRIPE_KEY, {
-      apiVersion: '2025-08-27.basil',
-      maxNetworkRetries: 2,
-      timeout: 10000, // 10 seconds
-    })
-    console.log('Stripe client initialized successfully')
-  } catch (error) {
-    console.error('Failed to initialize Stripe client:', error)
-    console.error('Error type:', typeof error)
-    console.error('Error details:', JSON.stringify(error, null, 2))
-    return NextResponse.json(
-      { error: 'Failed to initialize payment service' },
-      { status: 500 }
-    )
-  }
-  // レート制限チェック
-  const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')
-  if (!allowed) {
-    return rateLimitResponse(retryAfter)
-  }
-  
-  try {
+    // 環境変数チェック
+    const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
+    console.log('STRIPE_KEY exists:', !!STRIPE_KEY)
+    console.log('STRIPE_KEY prefix:', STRIPE_KEY?.substring(0, 7))
+
+    if (!STRIPE_KEY) {
+      console.error('STRIPE_SECRET_KEY is missing from environment variables')
+      return NextResponse.json(
+        { error: 'Payment service is not properly configured' },
+        { status: 500 }
+      )
+    }
+
+    // Stripeクライアントを動的に初期化
+    let stripe: Stripe
+    try {
+      console.log('Initializing Stripe client...')
+      stripe = new Stripe(STRIPE_KEY, {
+        apiVersion: '2025-08-27.basil',
+        maxNetworkRetries: 2,
+        timeout: 10000, // 10 seconds
+      })
+      console.log('Stripe client initialized successfully')
+    } catch (error) {
+      console.error('Failed to initialize Stripe client:', error)
+      console.error('Error type:', typeof error)
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      return NextResponse.json(
+        { error: 'Failed to initialize payment service' },
+        { status: 500 }
+      )
+    }
+
+    // レート制限チェック
+    console.log('Checking rate limit...')
+    const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')
+    if (!allowed) {
+      console.log('Rate limit exceeded')
+      return rateLimitResponse(retryAfter)
+    }
+    console.log('Rate limit check passed')
+
     const body = await request.json()
     const { entryData } = body
     
@@ -120,16 +124,18 @@ export async function POST(request: NextRequest) {
     // 注意: ここではデータベースに登録しない
     // Stripe Webhookで決済完了確認後に登録する
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       sessionId: session.id,
-      url: session.url 
+      url: session.url
     })
   } catch (error: any) {
-    console.error('Stripe session creation error:', error)
+    // 包括的なエラーハンドリング
+    console.error('Error in checkout session creation:', error)
     console.error('Error name:', error?.name)
     console.error('Error message:', error?.message)
     console.error('Error type:', error?.type)
     console.error('Error code:', error?.code)
+    console.error('Error stack:', error?.stack)
     console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2))
 
     // Stripeエラーの詳細なハンドリング
@@ -156,7 +162,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const errorMessage = error instanceof Error ? error.message : 'Failed to create checkout session'
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }
