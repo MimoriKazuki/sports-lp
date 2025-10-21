@@ -18,9 +18,7 @@ export async function GET() {
 
   try {
     // Stripeクライアントを初期化
-    const stripe = new Stripe(STRIPE_KEY, {
-      apiVersion: '2025-09-30.clover',
-    })
+    const stripe = new Stripe(STRIPE_KEY)
     result.stripeInitialized = true
 
     // テストAPIコール（残高を取得）

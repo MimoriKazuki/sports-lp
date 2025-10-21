@@ -20,13 +20,21 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Stripeクライアントを初期化
-  const stripe = new Stripe(STRIPE_KEY, {
-    apiVersion: '2025-09-30.clover',
-    maxNetworkRetries: 2,
-    timeout: 10000, // 10 seconds
-  })
-  console.log('Stripe client initialized successfully')
+  let stripe: Stripe
+  try {
+    // Stripeクライアントを初期化（SDKのデフォルトAPIバージョンを使用）
+    stripe = new Stripe(STRIPE_KEY, {
+      maxNetworkRetries: 2,
+      timeout: 10000, // 10 seconds
+    })
+    console.log('Stripe client initialized successfully')
+  } catch (initError: any) {
+    console.error('Failed to initialize Stripe client:', initError)
+    return NextResponse.json(
+      { error: 'Failed to initialize payment service' },
+      { status: 500 }
+    )
+  }
 
   // レート制限チェック（一時的に無効化）
   // const { allowed, retryAfter } = await checkRateLimit(request, 'createEntry')

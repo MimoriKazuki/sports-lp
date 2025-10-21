@@ -5,11 +5,20 @@ import { sendConfirmationEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-09-30.clover',
-})
+// Stripeはハンドラ内で初期化して、起動時の例外で関数全体が落ちないようにする
 
 export async function POST(request: NextRequest) {
+  let stripe: Stripe
+  try {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+  } catch (initError) {
+    console.error('Stripe init failed in webhook:', initError)
+    return NextResponse.json(
+      { error: 'Payment service init failed' },
+      { status: 500 }
+    )
+  }
+
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')!
 

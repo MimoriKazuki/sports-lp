@@ -5,12 +5,11 @@ import { sendConfirmationEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-09-30.clover',
-})
+// 起動時例外を避けるため、ハンドラ内で初期化
 
 export async function POST(request: Request) {
   try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
     const { sessionId } = await request.json()
 
     // まず既存のエントリーをチェック（二重登録防止）

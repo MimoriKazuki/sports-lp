@@ -82,19 +82,36 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
           }
         }),
       })
-      
-      const data = await response.json()
-      
-      if (response.ok) {
-        // Stripeの決済ページにリダイレクト
-        if (data.url) {
-          window.location.href = data.url
-        } else {
-          alert('決済ページの作成に失敗しました。')
+
+      // 応答のContent-Typeを確認し、JSON以外でも安全に処理
+      const contentType = response.headers.get('content-type') || ''
+      let data: any = null
+      if (contentType.includes('application/json')) {
+        try {
+          data = await response.json()
+        } catch (parseErr) {
+          console.error('Failed to parse JSON response:', parseErr)
         }
       } else {
-        // エラーメッセージを表示
-        const message = data.error || 'エラーが発生しました。もう一度お試しください。'
+        // JSON以外の応答（HTMLや空ボディ）に備える
+        const text = await response.text().catch(() => '')
+        console.error('Non-JSON response from server:', {
+          status: response.status,
+          statusText: response.statusText,
+          bodyPreview: text?.slice(0, 200)
+        })
+      }
+
+      if (response.ok) {
+        // Stripeの決済ページにリダイレクト
+        if (data?.url) {
+          window.location.href = data.url
+        } else {
+          setErrorMessage('決済ページの作成に失敗しました。')
+        }
+      } else {
+        // エラーメッセージを表示（JSONが無い場合にも対応）
+        const message = data?.error || `エラーが発生しました（${response.status}）。もう一度お試しください。`
         setErrorMessage(message)
       }
     } catch (error) {
