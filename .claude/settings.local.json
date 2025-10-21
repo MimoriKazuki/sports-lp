@@ -30,7 +30,14 @@
       "Bash(stripe:*)",
       "Bash(brew install:*)",
       "WebSearch",
-      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel --prod --yes --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge --force)"
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel --prod --yes --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge --force)",
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel logs sports-jq3v7xdm7-land-bridge.vercel.app --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge)",
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel logs https://sports-dioy570o0-land-bridge.vercel.app --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge)",
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel deploy:*)",
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel logs https://sports-kiuqr4wu7-land-bridge.vercel.app --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge --output=raw)",
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel logs https://sports-j45kbltiw-land-bridge.vercel.app --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge --output=raw)",
+      "Bash(git restore:*)",
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel logs:*)"
     ],
     "deny": [],
     "ask": []

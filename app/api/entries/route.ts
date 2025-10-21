@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getEntries, getEntryStats, deleteEntry } from '@/lib/supabase-entries'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const [entries, stats] = await Promise.all([
