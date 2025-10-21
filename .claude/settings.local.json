@@ -39,7 +39,11 @@
       "Bash(git restore:*)",
       "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel logs:*)",
       "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel ls:*)",
-      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel inspect https://sports-8byfv1fil-land-bridge.vercel.app --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge)"
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel inspect https://sports-8byfv1fil-land-bridge.vercel.app --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge)",
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:docs.stripe.com)",
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel inspect https://sports-mx5abncbo-land-bridge.vercel.app --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge)",
+      "Bash(VERCEL_TOKEN=JoLNJdGyi7I2U1XDrM1bVxLD npx vercel inspect https://sports-8mhircchr-land-bridge.vercel.app --token=JoLNJdGyi7I2U1XDrM1bVxLD --scope=land-bridge)"
     ],
     "deny": [],
     "ask": []
