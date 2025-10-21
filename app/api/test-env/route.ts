@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 export async function GET() {
   const stripeVars = Object.keys(process.env).filter(key => key.includes('STRIPE'))
   const hasStripeKey = !!process.env.STRIPE_SECRET_KEY

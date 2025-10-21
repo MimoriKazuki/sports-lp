@@ -4,6 +4,7 @@ import { createPaidEntry, getEntryBySessionId } from '@/lib/supabase-entries'
 import { sendConfirmationEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 // 起動時例外を避けるため、ハンドラ内で初期化
 

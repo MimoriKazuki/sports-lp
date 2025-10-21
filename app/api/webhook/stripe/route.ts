@@ -4,6 +4,7 @@ import { confirmEntry, getEntryBySessionId } from '@/lib/supabase-entries'
 import { sendConfirmationEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 // Stripeはハンドラ内で初期化して、起動時の例外で関数全体が落ちないようにする
 

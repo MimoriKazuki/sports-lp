@@ -5,6 +5,7 @@ import { entrySchema } from '@/lib/validation'
 // import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   // 環境変数チェック
