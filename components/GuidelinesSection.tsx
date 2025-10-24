@@ -114,7 +114,7 @@ export default function GuidelinesSection() {
               </div>
               <div>
                 <p className="text-white/70 mb-1">定員</p>
-                <p className="font-bold text-lg">32名（男女各16名）</p>
+                <p className="font-bold text-lg">34名（性別問わず）</p>
               </div>
             </div>
           </motion.div>

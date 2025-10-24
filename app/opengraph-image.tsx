@@ -78,7 +78,7 @@ export default async function Image() {
               fontWeight: 'bold',
             }}
           >
-            男女各16名限定 | 完全個人戦
+            34名限定 | 完全個人戦
           </div>
         </div>
       </div>

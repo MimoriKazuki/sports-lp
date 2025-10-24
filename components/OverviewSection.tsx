@@ -11,12 +11,12 @@ const overviewCards = [
   {
     label: '参加費',
     value: '¥3,000',
-    sub: '前払い',
+    sub: '当日払い',
   },
   {
     label: '募集人数',
-    value: '32名',
-    sub: '男女各16名',
+    value: '34名',
+    sub: '性別問わず',
   },
   {
     label: '優勝賞品',

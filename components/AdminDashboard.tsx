@@ -208,20 +208,20 @@ export default function AdminDashboard() {
                 <div>
                   <p className="text-gray-600 text-sm mb-1">総エントリー数</p>
                   <p className="text-4xl font-bold text-primary-forest">{counts.total}</p>
-                  <p className="text-sm text-gray-500 mt-1">定員: 33名</p>
+                  <p className="text-sm text-gray-500 mt-1">定員: 34名</p>
                 </div>
                 <div className="text-right">
                   <Users className="w-12 h-12 text-primary-forest/30 mb-2" />
-                  <p className="text-2xl font-bold text-primary-green">{Math.round((counts.total / 33) * 100)}%</p>
+                  <p className="text-2xl font-bold text-primary-green">{Math.round((counts.total / 34) * 100)}%</p>
                 </div>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-4">
                 <div
                   className="bg-gradient-to-r from-primary-green to-primary-emerald h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2"
-                  style={{ width: `${Math.min((counts.total / 33) * 100, 100)}%` }}
+                  style={{ width: `${Math.min((counts.total / 34) * 100, 100)}%` }}
                 >
                   {counts.total > 0 && (
-                    <span className="text-xs text-white font-bold">{counts.total}/33</span>
+                    <span className="text-xs text-white font-bold">{counts.total}/34</span>
                   )}
                 </div>
               </div>
@@ -233,26 +233,22 @@ export default function AdminDashboard() {
                 <div>
                   <p className="text-gray-600 text-sm mb-1">男性エントリー</p>
                   <p className="text-4xl font-bold text-primary-green">{counts.male}</p>
-                  <p className="text-sm text-gray-500 mt-1">定員: 17名</p>
+                  <p className="text-sm text-gray-500 mt-1">定員: 制限なし</p>
                 </div>
                 <div className="text-right">
                   <UserCheck className="w-12 h-12 text-primary-green/30 mb-2" />
-                  <p className="text-lg font-bold text-gray-600">残り {17 - counts.male}名</p>
                 </div>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-4">
                 <div
                   className="bg-primary-green h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2"
-                  style={{ width: `${Math.min((counts.male / 17) * 100, 100)}%` }}
+                  style={{ width: `${Math.min((counts.male / 34) * 100, 100)}%` }}
                 >
                   {counts.male > 0 && (
-                    <span className="text-xs text-white font-bold">{counts.male}/17</span>
+                    <span className="text-xs text-white font-bold">{counts.male}</span>
                   )}
                 </div>
               </div>
-              {counts.male >= 17 && (
-                <p className="text-red-600 text-sm font-bold mt-2">⚠️ 定員に達しました</p>
-              )}
             </div>
 
             {/* 女性エントリー */}
@@ -261,26 +257,22 @@ export default function AdminDashboard() {
                 <div>
                   <p className="text-gray-600 text-sm mb-1">女性エントリー</p>
                   <p className="text-4xl font-bold text-primary-emerald">{counts.female}</p>
-                  <p className="text-sm text-gray-500 mt-1">定員: 16名</p>
+                  <p className="text-sm text-gray-500 mt-1">定員: 制限なし</p>
                 </div>
                 <div className="text-right">
                   <UserX className="w-12 h-12 text-primary-emerald/30 mb-2" />
-                  <p className="text-lg font-bold text-gray-600">残り {16 - counts.female}名</p>
                 </div>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-4">
-                <div 
+                <div
                   className="bg-primary-emerald h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2"
-                  style={{ width: `${Math.min((counts.female / 16) * 100, 100)}%` }}
+                  style={{ width: `${Math.min((counts.female / 34) * 100, 100)}%` }}
                 >
                   {counts.female > 0 && (
-                    <span className="text-xs text-white font-bold">{counts.female}/16</span>
+                    <span className="text-xs text-white font-bold">{counts.female}</span>
                   )}
                 </div>
               </div>
-              {counts.female >= 16 && (
-                <p className="text-red-600 text-sm font-bold mt-2">⚠️ 定員に達しました</p>
-              )}
             </div>
           </div>
 
@@ -289,7 +281,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-600">募集状況:</span>
-                {counts.total >= 33 ? (
+                {counts.total >= 34 ? (
                   <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold">
                     🚫 募集終了
                   </span>
@@ -300,7 +292,7 @@ export default function AdminDashboard() {
                 )}
               </div>
               <div className="text-sm text-gray-600">
-                総残り枠: <span className="font-bold text-primary-forest text-lg">{33 - counts.total}名</span>
+                総残り枠: <span className="font-bold text-primary-forest text-lg">{34 - counts.total}名</span>
               </div>
             </div>
           </div>
