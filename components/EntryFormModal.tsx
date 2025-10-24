@@ -50,32 +50,28 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMessage('') // エラーメッセージをクリア
-    
+
     if (!agreedToTerms || !agreedToPrivacy) {
       setErrorMessage('利用規約と個人情報の取り扱いに同意してください。')
       return
     }
-    
-    // 定員チェック
-    if (formData.gender === 'male' && currentEntryCount.male >= 17) {
-      setErrorMessage('申し訳ございません。男性の定員に達しました。')
+
+    // 定員チェック（性別問わず合計人数）
+    if (currentEntryCount.total >= 12) {
+      setErrorMessage('申し訳ございません。定員に達しました。')
       return
     }
-    if (formData.gender === 'female' && currentEntryCount.female >= 16) {
-      setErrorMessage('申し訳ございません。女性の定員に達しました。')
-      return
-    }
-    
+
     setIsSubmitting(true)
-    
+
     try {
-      // Stripeチェックアウトセッションを作成
-      const response = await fetch('/api/create-checkout-session', {
+      // エントリーを直接作成（決済なし）
+      const response = await fetch('/api/create-entry', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           entryData: {
             ...formData,
             age: parseInt(formData.age, 10)
@@ -83,39 +79,18 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
         }),
       })
 
-      // 応答のContent-Typeを確認し、JSON以外でも安全に処理
-      const contentType = response.headers.get('content-type') || ''
-      let data: any = null
-      if (contentType.includes('application/json')) {
-        try {
-          data = await response.json()
-        } catch (parseErr) {
-          console.error('Failed to parse JSON response:', parseErr)
-        }
-      } else {
-        // JSON以外の応答（HTMLや空ボディ）に備える
-        const text = await response.text().catch(() => '')
-        console.error('Non-JSON response from server:', {
-          status: response.status,
-          statusText: response.statusText,
-          bodyPreview: text?.slice(0, 200)
-        })
-      }
+      const data = await response.json()
 
       if (response.ok) {
-        // Stripeの決済ページにリダイレクト
-        if (data?.url) {
-          window.location.href = data.url
-        } else {
-          setErrorMessage('決済ページの作成に失敗しました。')
-        }
+        // 申し込み完了画面を表示
+        setIsSubmitted(true)
       } else {
-        // エラーメッセージを表示（JSONが無い場合にも対応）
+        // エラーメッセージを表示
         const message = data?.error || `エラーが発生しました（${response.status}）。もう一度お試しください。`
         setErrorMessage(message)
       }
     } catch (error) {
-      console.error('Error creating checkout session:', error)
+      console.error('Error creating entry:', error)
       setErrorMessage('送信中にエラーが発生しました。もう一度お試しください。')
     } finally {
       setIsSubmitting(false)
@@ -143,8 +118,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
     }, 300)
   }
 
-  const remainingMale = 17 - currentEntryCount.male
-  const remainingFemale = 16 - currentEntryCount.female
+  const remainingTotal = 12 - currentEntryCount.total
 
   return (
     <AnimatePresence>
@@ -188,16 +162,13 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                     {/* 申し込み状況 */}
                     <div className="bg-gray-50 p-3 rounded mb-4">
                       <p className="text-sm text-gray-600 mb-2">現在の申し込み状況</p>
-                      <div className="flex justify-center gap-6 text-sm">
-                        <div>
-                          <span className="font-bold text-primary-green">男子</span>
-                          <span className="ml-2">{currentEntryCount.male}/17名</span>
-                          <span className="text-xs text-gray-500 ml-1">（残り{remainingMale}名）</span>
+                      <div className="text-center">
+                        <div className="text-lg">
+                          <span className="font-bold text-primary-green">{currentEntryCount.total}/12名</span>
+                          <span className="text-sm text-gray-600 ml-2">（男性{currentEntryCount.male}名・女性{currentEntryCount.female}名）</span>
                         </div>
-                        <div>
-                          <span className="font-bold text-primary-emerald">女子</span>
-                          <span className="ml-2">{currentEntryCount.female}/16名</span>
-                          <span className="text-xs text-gray-500 ml-1">（残り{remainingFemale}名）</span>
+                        <div className="text-sm text-gray-500 mt-1">
+                          残り<span className="font-bold text-primary-green">{remainingTotal}名</span>
                         </div>
                       </div>
                     </div>
@@ -253,13 +224,10 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                             required
                             checked={formData.gender === 'male'}
                             onChange={handleChange}
-                            disabled={isSubmitting || remainingMale <= 0}
+                            disabled={isSubmitting}
                             className="mr-2 w-4 h-4 text-primary-green"
                           />
-                          <span className={remainingMale <= 0 ? 'text-gray-400' : ''}>
-                            男性
-                            {remainingMale <= 0 && <span className="text-xs text-red-500 ml-1">（満員）</span>}
-                          </span>
+                          <span>男性</span>
                         </label>
                         <label className="flex items-center cursor-pointer">
                           <input
@@ -269,13 +237,10 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                             required
                             checked={formData.gender === 'female'}
                             onChange={handleChange}
-                            disabled={isSubmitting || remainingFemale <= 0}
+                            disabled={isSubmitting}
                             className="mr-2 w-4 h-4 text-primary-emerald"
                           />
-                          <span className={remainingFemale <= 0 ? 'text-gray-400' : ''}>
-                            女性
-                            {remainingFemale <= 0 && <span className="text-xs text-red-500 ml-1">（満員）</span>}
-                          </span>
+                          <span>女性</span>
                         </label>
                       </div>
                     </div>
@@ -319,11 +284,11 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-bold text-gray-700">参加費</p>
-                          <p className="text-xs text-gray-600 mt-1">決済はStripeで安全に処理されます</p>
+                          <p className="text-xs text-gray-600 mt-1">大会当日に現金でお支払いください</p>
                         </div>
                         <div className="text-right">
                           <p className="text-2xl font-bold text-primary-green">¥3,000</p>
-                          <p className="text-xs text-gray-600">税込</p>
+                          <p className="text-xs text-gray-600">税込（当日払い）</p>
                         </div>
                       </div>
                     </div>
@@ -392,25 +357,17 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                       className="w-full bg-primary-forest hover:bg-primary-forest/90 disabled:bg-gray-400 text-white font-bold text-xl py-4 transition-colors uppercase tracking-wider flex items-center justify-center gap-2"
                     >
                       {isSubmitting ? (
-                        '決済ページへ移動中...'
+                        '申し込み中...'
                       ) : (
-                        <>
-                          <span>決済へ進む</span>
-                          <span className="text-sm">(¥3,000)</span>
-                        </>
+                        '申し込む'
                       )}
                     </button>
                   </form>
 
                   <div className="text-xs text-gray-500 text-center mt-4 space-y-1">
-                    <p>※ 決済完了後にエントリーが確定します</p>
+                    <p>※ 申し込み完了後にエントリーが確定します</p>
+                    <p>※ 参加費3,000円は大会当日に現金でお支払いください</p>
                     <p>※ エントリー後のキャンセルはできません</p>
-                    <p className="flex items-center justify-center gap-1 mt-2">
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1Z" fill="#22C55E"/>
-                      </svg>
-                      決済は安全なStripeを使用
-                    </p>
                   </div>
                 </>
               ) : (
@@ -497,7 +454,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                   <p>2. 未成年者の参加には保護者の同意が必要です。</p>
                   
                   <h4 className="font-bold">第3条（参加費）</h4>
-                  <p>1. 参加費は3,000円とし、大会当日に現金でお支払いいただきます。</p>
+                  <p>1. 参加費は3,000円（税込）とし、大会当日に現金でお支払いいただきます。</p>
                   <p>2. 一度お支払いいただいた参加費は、いかなる理由があっても返金いたしません。</p>
                   
                   <h4 className="font-bold">第4条（キャンセル）</h4>

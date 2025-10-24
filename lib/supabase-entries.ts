@@ -43,8 +43,8 @@ export async function getEntryStats(): Promise<EntryStats> {
       male_count: 0,
       female_count: 0,
       total_count: 0,
-      male_remaining: 17,
-      female_remaining: 16
+      male_remaining: 12,
+      female_remaining: 12
     }
   }
 
