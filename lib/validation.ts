@@ -26,8 +26,11 @@ export const entrySchema = z.object({
   }),
   
   phone: z.string()
-    .regex(/^(0[5-9]0[0-9]{8}|0[1-9][1-9][0-9]{7})$/, '有効な電話番号を入力してください')
-    .transform(sanitizeInput),
+    .min(10, '電話番号を入力してください')
+    .transform(val => sanitizeInput(val.replace(/[^\d]/g, ''))) // ハイフンやスペースを削除してサニタイズ
+    .refine(val => /^(0[5-9]0[0-9]{8}|0[1-9][1-9][0-9]{7})$/.test(val), {
+      message: '有効な電話番号を入力してください（10桁または11桁）'
+    }),
   
   email: z.string()
     .email('有効なメールアドレスを入力してください')
