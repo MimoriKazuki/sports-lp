@@ -79,7 +79,16 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
         }),
       })
 
-      const data = await response.json()
+      // レスポンスボディが空でないかチェック
+      const text = await response.text()
+      let data
+      try {
+        data = text ? JSON.parse(text) : {}
+      } catch (parseError) {
+        console.error('Failed to parse response:', text)
+        setErrorMessage('サーバーエラーが発生しました。もう一度お試しください。')
+        return
+      }
 
       if (response.ok) {
         // 申し込み完了画面を表示

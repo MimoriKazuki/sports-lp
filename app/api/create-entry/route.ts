@@ -9,8 +9,26 @@ export const runtime = 'nodejs'
 // 決済なしで直接エントリーを作成するAPI
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    // リクエストボディをパース
+    let body
+    try {
+      body = await request.json()
+    } catch (parseError) {
+      console.error('Failed to parse request body:', parseError)
+      return NextResponse.json(
+        { error: 'リクエストデータの形式が不正です' },
+        { status: 400 }
+      )
+    }
+
     const { entryData } = body
+
+    if (!entryData) {
+      return NextResponse.json(
+        { error: 'エントリーデータが見つかりません' },
+        { status: 400 }
+      )
+    }
 
     console.log('Received entryData:', entryData)
 
