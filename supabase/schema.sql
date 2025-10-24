@@ -67,8 +67,8 @@ BEGIN
     COUNT(*) FILTER (WHERE gender = 'male' AND payment_status = 'paid')::INTEGER as male_count,
     COUNT(*) FILTER (WHERE gender = 'female' AND payment_status = 'paid')::INTEGER as female_count,
     COUNT(*) FILTER (WHERE payment_status = 'paid')::INTEGER as total_count,
-    (12 - COUNT(*) FILTER (WHERE payment_status = 'paid'))::INTEGER as male_remaining,
-    (12 - COUNT(*) FILTER (WHERE payment_status = 'paid'))::INTEGER as female_remaining
+    (34 - COUNT(*) FILTER (WHERE payment_status = 'paid'))::INTEGER as male_remaining,
+    (34 - COUNT(*) FILTER (WHERE payment_status = 'paid'))::INTEGER as female_remaining
   FROM entries;
 END;
 $$ LANGUAGE plpgsql;

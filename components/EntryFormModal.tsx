@@ -57,7 +57,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
     }
 
     // 定員チェック（性別問わず合計人数）
-    if (currentEntryCount.total >= 12) {
+    if (currentEntryCount.total >= 34) {
       setErrorMessage('申し訳ございません。定員に達しました。')
       return
     }
@@ -118,7 +118,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
     }, 300)
   }
 
-  const remainingTotal = 12 - currentEntryCount.total
+  const remainingTotal = 34 - currentEntryCount.total
 
   return (
     <AnimatePresence>
@@ -164,7 +164,7 @@ export default function EntryFormModal({ isOpen, onClose }: EntryFormModalProps)
                       <p className="text-sm text-gray-600 mb-2">現在の申し込み状況</p>
                       <div className="text-center">
                         <div className="text-lg">
-                          <span className="font-bold text-primary-green">{currentEntryCount.total}/12名</span>
+                          <span className="font-bold text-primary-green">{currentEntryCount.total}/34名</span>
                           <span className="text-sm text-gray-600 ml-2">（男性{currentEntryCount.male}名・女性{currentEntryCount.female}名）</span>
                         </div>
                         <div className="text-sm text-gray-500 mt-1">

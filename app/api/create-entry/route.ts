@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     // 定員チェック（性別問わず合計人数）
     const stats = await getEntryStats()
-    if (stats.total_count >= 12) {
+    if (stats.total_count >= 34) {
       return NextResponse.json(
         { error: '定員に達しました' },
         { status: 400 }
